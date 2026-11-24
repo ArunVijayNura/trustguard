@@ -1,0 +1,30 @@
+[
+  {
+    "app_id": "demo_clean",
+    "title": "Pocket Budget",
+    "category": "finance",
+    "description": "Track your monthly budget.",
+    "permissions": ["INTERNET", "POST_NOTIFICATIONS"],
+    "developer_account_age_days": 1200,
+    "developer_prior_strikes": 0,
+    "installs_prev_7d": 5400,
+    "installs_7d": 5900,
+    "avg_rating": 4.6,
+    "reviews": ["Simple and useful.", "Great update, much faster."],
+    "has_privacy_policy": true
+  },
+  {
+    "app_id": "demo_lookalike",
+    "title": "Wh4tsApp Plus",
+    "category": "communication",
+    "description": "The original app you trust, faster. Login with your existing account to continue.",
+    "permissions": ["INTERNET", "READ_SMS", "BIND_ACCESSIBILITY_SERVICE", "REQUEST_INSTALL_PACKAGES"],
+    "developer_account_age_days": 9,
+    "developer_prior_strikes": 1,
+    "installs_prev_7d": 200,
+    "installs_7d": 4100,
+    "avg_rating": 2.1,
+    "reviews": ["Fake app, stole my login.", "Asked for my bank OTP, reported.", "Works ok"],
+    "has_privacy_policy": false
+  }
+]
