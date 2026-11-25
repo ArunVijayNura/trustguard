@@ -1,0 +1,19 @@
+name: Keep live demo awake
+
+on:
+  schedule:
+    - cron: "30 */6 * * *"   # every 6 hours (UTC)
+  workflow_dispatch:          # run by hand from the Actions tab
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install playwright
+      - run: python -m playwright install --with-deps chromium
+      - run: python scripts/keepalive.py
