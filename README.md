@@ -10,6 +10,10 @@
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://trustguard.streamlit.app/)
+
+**[▶ Try the live reviewer console](https://trustguard.streamlit.app/)**
+
 </div>
 
 ---
