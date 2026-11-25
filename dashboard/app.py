@@ -5,14 +5,20 @@
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
-import plotly.express as px
-import streamlit as st
+import sys
+from pathlib import Path
 
-from trustguard.evaluate import operating_point
-from trustguard.model import train_default_model
-from trustguard.scoring import Thresholds, decide, score_frame
+# Let the app run from a fresh checkout (e.g. Streamlit Community Cloud) without `pip install -e .`
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import plotly.express as px  # noqa: E402
+import streamlit as st  # noqa: E402
+
+from trustguard.evaluate import operating_point  # noqa: E402
+from trustguard.model import train_default_model  # noqa: E402
+from trustguard.scoring import Thresholds, decide, score_frame  # noqa: E402
 
 st.set_page_config(page_title="TrustGuard Reviewer Console", page_icon="🛡️", layout="wide")
 
@@ -55,7 +61,7 @@ with tab_q:
     q = scored[scored["action"] == "HUMAN_REVIEW"].sort_values("risk_score", ascending=False)
     st.write(f"Top **{min(capacity, len(q))}** of {len(q)} queued apps (what reviewers see today):")
     st.dataframe(q.head(capacity)[["app_id", "title", "category", "risk_score", "tier", "reasons"]],
-                 use_container_width=True, hide_index=True)
+                 width="stretch", hide_index=True)
 
 with tab_dist:
     fig = px.histogram(scored.assign(label=np.where(y == 1, "violation", "honest")),
@@ -63,7 +69,7 @@ with tab_dist:
                        color_discrete_map={"violation": "#d62728", "honest": "#1f77b4"})
     fig.add_vline(x=t.review, line_dash="dash", annotation_text="review")
     fig.add_vline(x=t.block, line_dash="dash", line_color="red", annotation_text="block")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     st.caption("Log scale. Moving the thresholds trades reviewer workload against missed abuse.")
 
 with tab_inspect:

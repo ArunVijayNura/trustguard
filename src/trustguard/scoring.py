@@ -73,15 +73,24 @@ def decide(listing: dict, model: RiskModel | None, thresholds: Thresholds = Thre
 
 
 def score_frame(df: pd.DataFrame, model: RiskModel, thresholds: Thresholds = Thresholds()) -> pd.DataFrame:
-    """Batch-score a DataFrame of listings."""
+    """Batch-score a DataFrame of listings (one vectorised model call, rules per row)."""
+    records = df.to_dict("records")
+    feats = [extract_features(r) for r in records]
+    m_scores = model.predict_proba(pd.DataFrame(feats))
     out = []
-    for listing in df.to_dict("records"):
-        d = decide(listing, model, thresholds)
+    for listing, f, m in zip(records, feats, m_scores, strict=True):
+        hits = evaluate_rules(listing, f)
+        r = rule_risk(hits)
+        score = combine(float(m), r)
+        action = (Action.BLOCK if score >= thresholds.block
+                  else Action.HUMAN_REVIEW if score >= thresholds.review
+                  else Action.ALLOW)
         out.append({
-            "app_id": d.app_id, "title": listing.get("title"), "category": listing.get("category"),
-            "risk_score": d.risk_score, "model_score": d.model_score, "rule_score": d.rule_score,
-            "action": d.action.value, "tier": d.tier,
-            "reasons": "; ".join(f"{h.rule_id} {h.description}" for h in d.reasons),
+            "app_id": str(listing.get("app_id", "unknown")), "title": listing.get("title"),
+            "category": listing.get("category"),
+            "risk_score": round(score, 4), "model_score": round(float(m), 4), "rule_score": round(r, 4),
+            "action": action.value, "tier": _tier(score),
+            "reasons": "; ".join(f"{h.rule_id} {h.description}" for h in hits),
             "is_violation": listing.get("is_violation"), "violation_type": listing.get("violation_type"),
         })
     return pd.DataFrame(out)

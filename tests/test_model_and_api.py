@@ -73,3 +73,13 @@ def test_api_scores_listing(trained):
 def test_api_rejects_invalid_payload():
     client = TestClient(api.app)
     assert client.post("/v1/score", json={"app_id": "x"}).status_code == 422
+
+
+def test_batch_scoring_matches_single_decisions(trained):
+    from trustguard.scoring import score_frame
+
+    model, test_df, _, _ = trained
+    sample = test_df.head(25)
+    batch = score_frame(sample, model)
+    single = [decide(r, model).risk_score for r in sample.to_dict("records")]
+    assert np.allclose(batch["risk_score"].to_numpy(), single, atol=1e-4)
